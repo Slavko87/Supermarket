@@ -277,7 +277,7 @@ public class KlijentskaForma extends JFrame
 					else
 					{
 						Alert alert2 = new Alert(Alert.AlertType.WARNING);
-						alert2.setHeaderText("Nema trazena kolicina, u magacinu ima ukupno " + comboListaMagacina.getValue().proveriArtikalUMagacinu(a));
+						alert2.setHeaderText("Nema trazena kolicina, u magacinu ima ukupno " + comboListaMagacina.getValue().proveriArtikalUMagacinu(a) + " " + szr.getNazivArtikla());
 						alert2.showAndWait();
 						return;
 					}
@@ -338,7 +338,7 @@ public class KlijentskaForma extends JFrame
 			{
 				izdatRacun = false;
 				Alert alert2 = new Alert(Alert.AlertType.WARNING);
-				alert2.setHeaderText("Nema trazena kolicina, u magacinu ima ukupno " + comboListaMagacina.getValue().proveriArtikalUMagacinu(szr.getArtikal()));
+				alert2.setHeaderText("Nema trazena kolicina, u magacinu ima ukupno " + comboListaMagacina.getValue().proveriArtikalUMagacinu(szr.getArtikal()) + " " + szr.getNazivArtikla());
 				alert2.showAndWait();
 			}
 		}
@@ -349,6 +349,8 @@ public class KlijentskaForma extends JFrame
 			listaStavki.clear();
 			trenutnoZaduzenje.setText("Trenutno zaduzenje iznosi: ");
 			obrisiPoljaZaUnosIRefreshTabele();
+			popuniListuMagacina();
+			popuniListuArtikla();
 		}
 		return izdatRacun;
 	}
@@ -373,8 +375,7 @@ public class KlijentskaForma extends JFrame
 		tabelaArtikla.getItems().clear();
 		tabelaArtikla.getItems().addAll(listaStavki);
 		tabelaArtikla.refresh();
-		popuniListuMagacina();
-		popuniListuArtikla();
+		
 	}
 	
 	public Scene getScena() {return scena;}

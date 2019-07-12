@@ -47,11 +47,12 @@ public class ServerskaForma extends JFrame
 		ps = new PokreniServer();
 		ps.start();
 		
+		tabelaRacuna = new TabelaRacuna(listaRacuna);
+		tabelaRacuna.autosize();
+		
 		OsveziTabelu ot = new OsveziTabelu(this);
 		ot.start();
 		
-		tabelaRacuna = new TabelaRacuna(listaRacuna);
-		tabelaRacuna.autosize();
 		VBox glavniBox = new VBox(10);
 		glavniBox.setPadding(new Insets(10, 10, 10, 10));
 		
