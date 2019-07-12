@@ -1,38 +1,47 @@
 package db;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 public class UtilDB 
 {
-	public static int getLastElement (String tableName) 
+	
+	
+	public static int vratiPoslednjiID (String tabela)
 	{
 		Database db = Database.getKonekcijaNaBazu();
-		int last = 0;
-		try
+		int poslednji = 0;
+		
+		String upit = "select MAX(idRacuna) as max from " + tabela;
+		
+		try 
 		{
-			String query = "SELECT * FROM " + tableName;
-			PreparedStatement prepS = db.conn.prepareStatement(query);
-			ResultSet res = prepS.executeQuery();
-			ResultSetMetaData rsmd = (ResultSetMetaData) res.getMetaData();
-			String firstColumn = rsmd.getColumnName(1);
+			Statement s = db.conn.createStatement();
+			ResultSet rs = s.executeQuery(upit);
 			
-			
-			String query2 = "SELECT " + firstColumn + " FROM " + tableName + " ORDER BY " + firstColumn + " DESC LIMIT 0,1";
-			PreparedStatement prepS2 = db.conn.prepareStatement(query2);
-			ResultSet res2 = prepS2.executeQuery();
-			
-			if (res2.next()) 
-				last = res2.getInt(1);
-				
-			return last;
-		}
+			while(rs.next())
+			{
+				poslednji = rs.getInt("max");
+			}
+		} 
 		catch (SQLException e) 
 		{
+			
 			e.printStackTrace();
 			return -1;
 		}
+		return poslednji;
+		
+	}
+	
+	public static Timestamp dajTrenutnoTimestampVreme ()
+	{
+		java.util.Date dt = new java.util.Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String trenutnoVreme = sdf.format(dt);
+		return Timestamp.valueOf(trenutnoVreme);
 	}
 }

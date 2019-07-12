@@ -42,7 +42,7 @@ public class KlijentskaForma extends JFrame
 	
 	private TabelaArtikla tabelaArtikla;
 	
-	private Label trenutnoZaduzenje = new Label("Trenutno zaduzenje iznosi: ");
+	private Label trenutnoZaduzenje = new Label("Trenutno zaduzenje iznosi: 0.0");
 		
 	public KlijentskaForma ()
 	{

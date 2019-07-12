@@ -1,12 +1,12 @@
 package db;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import supermarket.Artikal;
 import supermarket.Magacin;
+import supermarket.Racun;
 import supermarket.StavkaZaRacun;
 
 public class Database {
@@ -144,7 +144,7 @@ public class Database {
 	
 	public void zapamtiRacunUBazu (List<StavkaZaRacun> listaStavki)
 	{
-		int idRacuna = UtilDB.getLastElement("racun") + 1;
+		int idRacuna = UtilDB.vratiPoslednjiID("racun") + 1;
 		for (StavkaZaRacun szr : listaStavki) 
 		{
 			//upisivanje stavki u tabelu racun
@@ -157,7 +157,7 @@ public class Database {
 				ps.setInt(3, szr.getKolicina());
 				ps.setDouble(4, szr.getCenaArtikla());
 				ps.setInt(5, szr.getIdMagacina());
-				ps.setDate(6, Date.valueOf(LocalDate.now()));
+				ps.setTimestamp(6, UtilDB.dajTrenutnoTimestampVreme());
 				ps.executeUpdate();
 				ps.close();
 			}
@@ -213,6 +213,53 @@ public class Database {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public ArrayList<Racun> dajListuRacuna(String vreme)
+	{
+		ArrayList<Racun> listaRacuna = new ArrayList<>();
+		String upit = "SELECT * , COUNT(idRacuna) AS brojStavki, SUM(cenaArtikla * kolicina) AS ukupnaSuma FROM racun WHERE datum >= '" + vreme + "' GROUP by idRacuna";
+		
+		try 
+		{
+			Statement s = conn.createStatement();
+			ResultSet rs = s.executeQuery(upit);
+			
+			while (rs.next())
+			{
+				int idRacuna = rs.getInt("idRacuna");
+				double ukupanIznos = rs.getDouble("ukupnaSuma");
+				Timestamp datum = rs.getTimestamp("datum");
+				
+				String upit2 = "SELECT * FROM racun r JOIN artikal a ON r.sifraArtikla = a.sifraArtikla WHERE idRacuna = " + idRacuna;
+				
+				Statement s2 = conn.createStatement();
+				ResultSet rs2 = s2.executeQuery(upit2);
+				HashMap<Artikal, Integer> listaStavki = new HashMap<>();
+				
+				while (rs2.next())
+				{
+					int sifraArtikla = rs2.getInt("sifraArtikla");
+					String barKodArtikla = rs2.getString("barKodArtikla");
+					String nazivArtikla = rs2.getString("nazivArtikla");
+					double cenaArtikla = rs2.getDouble("cenaArtikla");
+					int kolicina = rs2.getInt("kolicina");
+					Artikal a = new Artikal(sifraArtikla, barKodArtikla, nazivArtikla, cenaArtikla);
+					
+					listaStavki.put(a, kolicina);
+				}
+				
+				Racun r = new Racun(idRacuna, listaStavki, ukupanIznos, datum);
+				listaRacuna.add(r);
+			}
+			
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return listaRacuna;
 	}
 		
 }
