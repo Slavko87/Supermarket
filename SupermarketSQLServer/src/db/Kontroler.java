@@ -38,19 +38,30 @@ public class Kontroler
 		return lista;
 	}
 
-	public void umanjiBrojArtiklaUMagacinu(List<StavkaZaRacun> listaStavki) 
+	public boolean umanjiBrojArtiklaUMagacinu(List<StavkaZaRacun> listaStavki) 
 	{
+		boolean b;
 		db.otvoriKonekciju();
-		db.umanjiBrojArtiklaUMagacinu(listaStavki);
+		b = db.umanjiBrojArtiklaUMagacinu(listaStavki);
 		db.zatvoriKonekciju();
+		return b;
 	}
 	
-	public ArrayList<Racun> dajListuRacuna (String vreme)
+	public ArrayList<Racun> dajListuRacuna (String vremeOD, String vremeDO)
 	{
 		db.otvoriKonekciju();
-		ArrayList<Racun> lista = db.dajListuRacuna(vreme);
+		ArrayList<Racun> lista = db.dajListuRacuna(vremeOD, vremeDO);
 		db.zatvoriKonekciju();
 		return lista;
+	}
+
+	public boolean ubaciNovArtikal(Artikal a) 
+	{
+		boolean ubacen;
+		db.otvoriKonekciju();
+		ubacen = db.ubaciNovArtikal(a);
+		db.zatvoriKonekciju();
+		return ubacen;
 	}
 
 }

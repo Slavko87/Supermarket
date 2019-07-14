@@ -44,7 +44,9 @@ public class ObradaKlijentskihZahteva extends Thread
 					so.setObjekat(listaMagacina);
 					break;
 				case Operacije.SMANJI_ZALIHE_U_MAGACINU:
-					Kontroler.getInstanca().umanjiBrojArtiklaUMagacinu((List<StavkaZaRacun>) kz.getObjekat());
+					boolean umanjeno;
+					umanjeno = Kontroler.getInstanca().umanjiBrojArtiklaUMagacinu((List<StavkaZaRacun>) kz.getObjekat());
+					so.setObjekat(umanjeno);
 					break;
 			}
 			posaljiOdgovorKlijentu(so);

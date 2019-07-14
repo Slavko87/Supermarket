@@ -17,7 +17,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import serverskiDeo.PokreniServer;
 import supermarket.Racun;
-import util.Util;
+import tabela.OsveziTabelu;
+import tabela.TabelaRacunaZaPazar;
+import util.Konstante;
 
 @SuppressWarnings("serial")
 public class ServerskaForma extends JFrame
@@ -37,9 +39,9 @@ public class ServerskaForma extends JFrame
 	private Button pregledPazara = new Button("Pregled pazara");
 	
 	private ArrayList<Racun> listaRacuna = new ArrayList<>();
-	private TabelaRacuna tabelaRacuna;
+	private TabelaRacunaZaPazar tabelaRacuna;
 	
-	private String trenutnoVreme = Util.trenutnoVreme;
+	private String trenutnoVreme = Konstante.trenutnoVreme;
 	
 	public ServerskaForma()
 	{
@@ -47,7 +49,9 @@ public class ServerskaForma extends JFrame
 		ps = new PokreniServer();
 		ps.start();
 		
-		tabelaRacuna = new TabelaRacuna(listaRacuna);
+		postaviAkcijeNaDugmice();
+		
+		tabelaRacuna = new TabelaRacunaZaPazar(listaRacuna);
 		tabelaRacuna.autosize();
 		
 		OsveziTabelu ot = new OsveziTabelu(this);
@@ -92,33 +96,42 @@ public class ServerskaForma extends JFrame
 		glavniBox.getChildren().add(racunBox);
 		
 		VBox racunUzivoBox = new VBox(10);
-		racunUzivoBox.setMaxWidth(400);
-		
+		racunUzivoBox.setMaxWidth(474);
+		racunUzivoBox.setOnMousePressed(e -> {
+			refresujTabeluSaRacunima();
+		});
 		Label racunUzivo = new Label("RACUNI UZIVO");
-		racunUzivo.setStyle("-fx-text-fill: RED; -fx-background-color: rgb(244,244,244); -fx-translate-y: 0; -fx-translate-x: 165");
+		racunUzivo.setStyle("-fx-text-fill: RED; -fx-background-color: rgb(244,244,244); -fx-translate-y: 0; -fx-translate-x: 180");
 		racunUzivoBox.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(2))));
 		tabelaRacuna.setMinHeight(330);
 		tabelaRacuna.setMaxHeight(330);
 		tabelaRacuna.autosize();
 		racunUzivoBox.getChildren().addAll(racunUzivo, tabelaRacuna);
-		VBox.setMargin(racunUzivoBox, new Insets(0, 0, 0, 80));
+		VBox.setMargin(racunUzivoBox, new Insets(0, 0, 0, 43));
 		glavniBox.getChildren().add(racunUzivoBox);
 		
 		scena = new Scene(glavniBox, 590, 600);
 	}
 	
-	public ArrayList<Racun> popuniListuRacuna(String vreme)
+	public ArrayList<Racun> popuniListuRacuna(String vremeOD, String vremeDO)
 	{
-		ArrayList<Racun> lista = Kontroler.getInstanca().dajListuRacuna(vreme);
+		ArrayList<Racun> lista = Kontroler.getInstanca().dajListuRacuna(vremeOD, vremeDO);
 		return lista;
 	}
 	
 	public void refresujTabeluSaRacunima ()
 	{
-		listaRacuna = popuniListuRacuna(trenutnoVreme);
+		listaRacuna = popuniListuRacuna(trenutnoVreme, Konstante.do2100godine);
 		tabelaRacuna.getItems().clear();
 		tabelaRacuna.getItems().addAll(listaRacuna);
 		tabelaRacuna.refresh();
+	}
+	
+	public void postaviAkcijeNaDugmice()
+	{
+		dodajArtikal.setOnAction(e -> new DodajNovArtikal());
+		pregledPazara.setOnAction(e -> new PregledPazara());
+		pregledRacuna.setOnAction(e -> new PregledRacuna());
 	}
 
 	public Scene getScena() {return scena;}

@@ -10,13 +10,12 @@ public class UtilDB
 {
 	
 	
-	public static int vratiPoslednjiID (String tabela)
+	public static int vratiPoslednjiID (String tabela, String imePolja)
 	{
 		Database db = Database.getKonekcijaNaBazu();
 		int poslednji = 0;
-		
-		String upit = "select MAX(idRacuna) as max from " + tabela;
-		
+		String upit = "select MAX(" + imePolja + ") as max from " + tabela;
+		db.otvoriKonekciju();
 		try 
 		{
 			Statement s = db.conn.createStatement();

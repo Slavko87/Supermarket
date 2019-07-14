@@ -2,57 +2,52 @@ package supermarket;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import javafx.scene.control.ComboBox;
 
 @SuppressWarnings("serial")
 public class Racun implements Serializable
 {
 	private int idRacuna;
-	private HashMap<Artikal, Integer> listaStavki = new HashMap<>();
+	private ArrayList<StavkaZaRacun> listaStavki = new ArrayList<>();
 	private double ukupanIznosRacuna;
 	private Timestamp datumKreiranjaRacuna;
+	private ComboBox<String> comboStavke = new ComboBox<>();
 	
 	public Racun() {super();}
 
-	public Racun(int idRacuna, HashMap<Artikal, Integer> listaStavki, double ukupanIznosRacuna, Timestamp datumKreiranjaRacuna) 
+	public Racun(int idRacuna, ArrayList<StavkaZaRacun> listaStavki, double ukupanIznosRacuna, Timestamp datumKreiranjaRacuna) 
 	{
 		super();
 		this.idRacuna = idRacuna;
 		this.listaStavki = listaStavki;
 		this.ukupanIznosRacuna = ukupanIznosRacuna;
-		
 		this.datumKreiranjaRacuna = datumKreiranjaRacuna;
+		popuniComboStavke();
 	}
 	
-	public boolean dodajArtikalNaRacun(Artikal artikal, Integer kolicina, Magacin magacin)
+	private void popuniComboStavke()
 	{
-		boolean dodatArtikal = false;
-		Artikal zeljeniArtikal = null;
-		
-		for (Map.Entry<Artikal, Integer> e : magacin.getListaArtikla().entrySet())
+		for (StavkaZaRacun stavkaZaRacun : listaStavki) 
 		{
-			if (e.getKey().equals(artikal))
-			{
-				zeljeniArtikal = artikal;
-				if (e.getValue() >= kolicina)
-				{
-					this.listaStavki.put(zeljeniArtikal, kolicina);
-					e.setValue(e.getValue() - kolicina);
-					dodatArtikal = true;
-				}
-			}
+			String s = stavkaZaRacun.getNazivArtikla() + " -kol: " + stavkaZaRacun.getKolicina();
+			comboStavke.getItems().add(s);
 		}
-		return dodatArtikal;
 	}
 	
 	public double ukupanRacun ()
 	{
 		double ukupanRacun = 0;
-		for (Map.Entry<Artikal, Integer> e : listaStavki.entrySet()) 
-			ukupanRacun += e.getValue();
+		for (StavkaZaRacun stavkaZaRacun : listaStavki) 
+			ukupanRacun += stavkaZaRacun.getCenaArtikla() * stavkaZaRacun.getKolicina();
 		
 		return ukupanRacun;
+	}
+	
+	@Override
+	public String toString() 
+	{
+		return "ID racuna " + this.idRacuna + ", iznos: " + this.ukupanIznosRacuna + ", datum " + this.datumKreiranjaRacuna.toString().substring(0, 19);
 	}
 
 	public int getIdRacuna() {return idRacuna;}
@@ -61,9 +56,11 @@ public class Racun implements Serializable
 	public void setUkupanIznosRacuna(double ukupanIznosRacuna) {this.ukupanIznosRacuna = ukupanIznosRacuna;}
 	public Timestamp getDatumKreiranjaRacuna() {return datumKreiranjaRacuna;}
 	public void setDatumKreiranjaRacuna(Timestamp datumKreiranjaRacuna) {this.datumKreiranjaRacuna = datumKreiranjaRacuna;}
-	public HashMap<Artikal, Integer> getListaStavki() {return listaStavki;}
-	public void setListaStavki(HashMap<Artikal, Integer> listaStavki) {this.listaStavki = listaStavki;}
-	
+	public ComboBox<String> getComboStavke() {return comboStavke;}
+	public ArrayList<StavkaZaRacun> getListaStavki() {return listaStavki;}
+	public void setListaStavki(ArrayList<StavkaZaRacun> listaStavki) {this.listaStavki = listaStavki;}
+	public void setComboStavke(ComboBox<String> comboStavke) {this.comboStavke = comboStavke;}
+
 	//za tabelu potrebno
 	public int getBrojStavkiNaRacunu() {return listaStavki.size();}
 	

@@ -2,6 +2,7 @@ package forme;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JFrame;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -165,7 +166,6 @@ public class KlijentskaForma extends JFrame
 		comboListaArtikla.getItems().clear();
 		listaArtikla = new ArrayList<>();
 		List<Artikal> lista2 = (List<Artikal>) so.getObjekat();
-		//listaArtikla = (List<Artikal>) so.getObjekat();
 		listaArtikla.addAll(lista2);
 		for (Artikal artikal : listaArtikla) 
 		{
@@ -195,6 +195,7 @@ public class KlijentskaForma extends JFrame
 		return lista;
 	}
 
+		
 	private void filtrirajPoSifriArtikla(int filter)
 	{
 		comboListaArtikla.getItems().clear();
@@ -331,37 +332,64 @@ public class KlijentskaForma extends JFrame
 	public boolean izdajRacun()
 	{
 		boolean izdatRacun = true;
+		boolean ubacenoUbazu;
 		popuniListuMagacina();
-		for (StavkaZaRacun szr : listaStavki) 
+		
+		try 
 		{
-			if (proveriStanjeArtikla(szr.getArtikal(), szr.getKolicina(), szr.getIdMagacina()) == false)
+			for (StavkaZaRacun szr : listaStavki) 
 			{
-				izdatRacun = false;
-				Alert alert2 = new Alert(Alert.AlertType.WARNING);
-				alert2.setHeaderText("Nema trazena kolicina, u magacinu ima ukupno " + comboListaMagacina.getValue().proveriArtikalUMagacinu(szr.getArtikal()) + " " + szr.getNazivArtikla());
-				alert2.showAndWait();
+				if (proveriStanjeArtikla(szr.getArtikal(), szr.getKolicina(), szr.getIdMagacina()) == false)
+				{
+					izdatRacun = false;
+					Alert alert2 = new Alert(Alert.AlertType.WARNING);
+					alert2.setHeaderText("Nema trazena kolicina, u magacinu ima ukupno " + comboListaMagacina.getValue().proveriArtikalUMagacinu(szr.getArtikal()) + " " + szr.getNazivArtikla());
+					alert2.showAndWait();
+					
+				}
 			}
+		}
+		catch (NullPointerException e)
+		{
+			e.printStackTrace();
 		}
 		
 		if (izdatRacun == true)
 		{
-			umanjiBrojArtiklaUMagacinu(listaStavki);
-			listaStavki.clear();
-			trenutnoZaduzenje.setText("Trenutno zaduzenje iznosi: ");
-			obrisiPoljaZaUnosIRefreshTabele();
-			popuniListuMagacina();
-			popuniListuArtikla();
+			ubacenoUbazu = umanjiBrojArtiklaUMagacinu(listaStavki);
+			if (ubacenoUbazu == true)
+			{
+				listaStavki.clear();
+				trenutnoZaduzenje.setText("Trenutno zaduzenje iznosi: ");
+				obrisiPoljaZaUnosIRefreshTabele();
+				popuniListuMagacina();
+				popuniListuArtikla();
+			}
+			else
+			{
+				Alert alert2 = new Alert(Alert.AlertType.WARNING);
+				alert2.setHeaderText("Doslo je do greske prilikom upisa u bazu, racun nije izdat");
+				alert2.showAndWait();
+			}
+		}
+		else
+		{
+			Alert alert2 = new Alert(Alert.AlertType.WARNING);
+			alert2.setHeaderText("Doslo je do greske prilikom upisa u bazu, racun nije izdat");
+			alert2.showAndWait();
 		}
 		return izdatRacun;
 	}
 	
 	//ako je izdatRacun = true onda se poziva ova metoda
-	public void umanjiBrojArtiklaUMagacinu(List<StavkaZaRacun> listaStavki)
+	public boolean umanjiBrojArtiklaUMagacinu(List<StavkaZaRacun> listaStavki)
 	{
+		boolean ubaceno;
 		KlijentskiZahtev kz = new KlijentskiZahtev(Operacije.SMANJI_ZALIHE_U_MAGACINU, listaStavki);
 		KomunikacijaSaServerom.getInstanca().posaljiZahtev(kz);
-		@SuppressWarnings("unused")
 		ServerskiOdgovor so = KomunikacijaSaServerom.getInstanca().primiOdgovor();
+		ubaceno = (boolean) so.getObjekat();
+		return ubaceno;
 	}
 	
 	private void obrisiPoljaZaUnosIRefreshTabele ()

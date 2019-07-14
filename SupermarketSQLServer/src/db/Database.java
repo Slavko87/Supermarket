@@ -142,9 +142,10 @@ public class Database {
 		return lista;
 	}
 	
-	public void zapamtiRacunUBazu (List<StavkaZaRacun> listaStavki)
+	public boolean zapamtiRacunUBazu (List<StavkaZaRacun> listaStavki)
 	{
-		int idRacuna = UtilDB.vratiPoslednjiID("racun") + 1;
+		boolean zapamceno = true;
+		int idRacuna = UtilDB.vratiPoslednjiID("racun", "idRacuna") + 1;
 		for (StavkaZaRacun szr : listaStavki) 
 		{
 			//upisivanje stavki u tabelu racun
@@ -159,20 +160,22 @@ public class Database {
 				ps.setInt(5, szr.getIdMagacina());
 				ps.setTimestamp(6, UtilDB.dajTrenutnoTimestampVreme());
 				ps.executeUpdate();
-				ps.close();
+				
 			}
 			catch (SQLException e)
 			{
 				e.printStackTrace();
+				zapamceno = false;
 			}
 		}
+		return zapamceno;
 	}
 
-	public void umanjiBrojArtiklaUMagacinu(List<StavkaZaRacun> listaStavki) 
+	public boolean umanjiBrojArtiklaUMagacinu(List<StavkaZaRacun> listaStavki) 
 	{
+		boolean ubacenoIsmanjeno = zapamtiRacunUBazu(listaStavki);
 		//upisivanje stavki u tabelu racun
-		zapamtiRacunUBazu(listaStavki);
-		
+				
 		//smanjivanje stavki iz magacina
 		try 
 		{
@@ -200,25 +203,28 @@ public class Database {
 						}
 						else
 						{
-						String upit2 = "UPDATE magacinkolicina SET kolicina = " + novaKolicina + " WHERE idMagacina = " + idMagacina + " AND sifraArtikla = " + sifraArtikla;
-						Statement s2 = conn.createStatement();
-						s2.executeUpdate(upit2);
-						s2.close();
+							String upit2 = "UPDATE magacinkolicina SET kolicina = " + novaKolicina + " WHERE idMagacina = " + idMagacina + " AND sifraArtikla = " + sifraArtikla;
+							Statement s2 = conn.createStatement();
+							s2.executeUpdate(upit2);
+							s2.close();
 						}
 					}
 				}
 			}
+			
 		} 
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
+			ubacenoIsmanjeno = false;
 		}
+		return ubacenoIsmanjeno;
 	}
 	
-	public ArrayList<Racun> dajListuRacuna(String vreme)
+	public ArrayList<Racun> dajListuRacuna(String vremeOD, String vremeDO)
 	{
 		ArrayList<Racun> listaRacuna = new ArrayList<>();
-		String upit = "SELECT * , COUNT(idRacuna) AS brojStavki, SUM(cenaArtikla * kolicina) AS ukupnaSuma FROM racun WHERE datum >= '" + vreme + "' GROUP by idRacuna";
+		String upit = "SELECT * , COUNT(idRacuna) AS brojStavki, SUM(cenaArtikla * kolicina) AS ukupnaSuma FROM racun WHERE datum >= '" + vremeOD + "' AND datum <= '" + vremeDO + "' GROUP by idRacuna";
 		
 		try 
 		{
@@ -235,7 +241,7 @@ public class Database {
 				
 				Statement s2 = conn.createStatement();
 				ResultSet rs2 = s2.executeQuery(upit2);
-				HashMap<Artikal, Integer> listaStavki = new HashMap<>();
+				ArrayList<StavkaZaRacun> listaStavki = new ArrayList<>();
 				
 				while (rs2.next())
 				{
@@ -244,9 +250,10 @@ public class Database {
 					String nazivArtikla = rs2.getString("nazivArtikla");
 					double cenaArtikla = rs2.getDouble("cenaArtikla");
 					int kolicina = rs2.getInt("kolicina");
+					int idMagacina = rs2.getInt("idMagacina");
 					Artikal a = new Artikal(sifraArtikla, barKodArtikla, nazivArtikla, cenaArtikla);
-					
-					listaStavki.put(a, kolicina);
+					StavkaZaRacun stavka = new StavkaZaRacun(a, kolicina, idMagacina);
+					listaStavki.add(stavka);
 				}
 				
 				Racun r = new Racun(idRacuna, listaStavki, ukupanIznos, datum);
@@ -260,6 +267,31 @@ public class Database {
 		}
 		
 		return listaRacuna;
+	}
+
+	public boolean ubaciNovArtikal(Artikal a) 
+	{
+		boolean ubacen;
+		
+		try 
+		{
+			String upit = "INSERT into artikal VALUES (?, ?, ?, ?)";
+			PreparedStatement ps = conn.prepareStatement(upit);
+			ps.setInt(1, a.getSifraArtikla());
+			ps.setString(2, a.getBarKodArtikla());
+			ps.setString(3, a.getNazivArtikla());
+			ps.setDouble(4, a.getCena());
+			ps.executeUpdate();
+			ps.close();
+			ubacen = true;
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+			ubacen = false;
+		}
+		return ubacen;
+		
 	}
 		
 }

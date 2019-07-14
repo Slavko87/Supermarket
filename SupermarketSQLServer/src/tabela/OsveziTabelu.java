@@ -1,4 +1,6 @@
-package forme;
+package tabela;
+
+import forme.ServerskaForma;
 
 public class OsveziTabelu extends Thread 
 {
@@ -18,7 +20,7 @@ public class OsveziTabelu extends Thread
 		
 			try
 			{
-				Thread.sleep(5000);
+				Thread.sleep(15000);
 			} 
 			catch (InterruptedException e) 
 			{
