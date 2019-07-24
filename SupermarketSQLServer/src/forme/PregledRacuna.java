@@ -24,7 +24,7 @@ public class PregledRacuna extends JFrame
 	private Stage stage = new Stage();
 	private Scene scene;
 	private ArrayList<Racun> listaRacuna = Kontroler.getInstanca().dajListuRacuna(Konstante.od1900godine, Konstante.do2100godine);
-	private ComboBox<Racun> comboListaRacuna = new ComboBox<>();
+	private ComboBox<Racun> comboListaRacuna = Metode.napuniComboBox(listaRacuna);
 	private Racun racun = null;
 	private TabelaStavkiZaRacun tabela = new TabelaStavkiZaRacun(racun);
 	private TextField idRacuna = new TextField();
@@ -36,7 +36,6 @@ public class PregledRacuna extends JFrame
 		VBox glavniBox = new VBox(10);
 		glavniBox.setPadding(new Insets(10, 10, 10, 10));
 		
-		comboListaRacuna = Metode.napuniComboBox(listaRacuna);
 		comboListaRacuna.setMinWidth(400);
 		glavniBox.getChildren().add(comboListaRacuna);
 		

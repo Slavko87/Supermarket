@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class PokreniServer extends Thread 
+public class PokreniServer extends Thread
 {
 	public static boolean serverRadi = true;
+	
 	@Override
 	public void run() {
 		try 

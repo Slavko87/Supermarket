@@ -59,6 +59,7 @@ public class ObradaKlijentskihZahteva extends Thread
 		{
 			ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 			oos.writeObject(so);
+			oos.flush();
 		} 
 		catch (IOException e) 
 		{

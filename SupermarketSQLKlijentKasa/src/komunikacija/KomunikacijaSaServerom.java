@@ -34,6 +34,7 @@ public class KomunikacijaSaServerom
 		{
 			ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 			oos.writeObject(kz);
+			oos.flush();
 		} 
 		catch (IOException e) 
 		{
@@ -48,6 +49,7 @@ public class KomunikacijaSaServerom
 		{
 			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 			so = (ServerskiOdgovor) ois.readObject();
+			
 		} 
 		catch (IOException e) 
 		{

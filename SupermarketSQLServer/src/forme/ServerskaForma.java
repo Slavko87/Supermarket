@@ -129,9 +129,10 @@ public class ServerskaForma extends JFrame
 	
 	public void postaviAkcijeNaDugmice()
 	{
-		dodajArtikal.setOnAction(e -> new DodajNovArtikal());
+		dodajArtikal.setOnAction(e -> new DodajNovArtikal(false));
 		pregledPazara.setOnAction(e -> new PregledPazara());
 		pregledRacuna.setOnAction(e -> new PregledRacuna());
+		prikaziArtikle.setOnAction(e -> new PrikaziArtikle());
 	}
 
 	public Scene getScena() {return scena;}

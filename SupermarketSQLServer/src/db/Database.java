@@ -68,10 +68,16 @@ public class Database {
 		return database;
 	}
 
-	public ArrayList<Artikal> dajListuArtikla(Integer brojMagacina)
+	/*
+	 * Ako je se unese idMagacina 0 onda prikazuje sve artikle
+	 */
+	public ArrayList<Artikal> dajListuArtiklaZaMagacin(Integer brojMagacina)
 	{
 		ArrayList<Artikal> lista = new ArrayList<>();
 		String upit = "select * from artikal a JOIN magacinkolicina mk on a.sifraArtikla = mk.sifraArtikla where mk.idMagacina = " + brojMagacina + " ORDER by a.nazivArtikla";
+		if (brojMagacina == 0)
+			upit = "select * from artikal a ORDER by a.nazivArtikla";
+		
 		try 
 		{
 			Statement s = conn.createStatement();
@@ -174,8 +180,7 @@ public class Database {
 	public boolean umanjiBrojArtiklaUMagacinu(List<StavkaZaRacun> listaStavki) 
 	{
 		boolean ubacenoIsmanjeno = zapamtiRacunUBazu(listaStavki);
-		//upisivanje stavki u tabelu racun
-				
+						
 		//smanjivanje stavki iz magacina
 		try 
 		{
@@ -269,18 +274,26 @@ public class Database {
 		return listaRacuna;
 	}
 
-	public boolean ubaciNovArtikal(Artikal a) 
+	/*
+	 * ukoliko artikal postoji onda se radi update!
+	 */
+	public boolean ubaciNovArtikal(Artikal a, boolean daLiVecPostoji) 
 	{
 		boolean ubacen;
 		
 		try 
 		{
 			String upit = "INSERT into artikal VALUES (?, ?, ?, ?)";
+			if (daLiVecPostoji == true)
+				upit = "UPDATE artikal SET sifraArtikla = ?, barKodArtikla = ?, nazivArtikla = ?, cenaArtikla = ? WHERE sifraArtikla = ?";
+			
 			PreparedStatement ps = conn.prepareStatement(upit);
 			ps.setInt(1, a.getSifraArtikla());
 			ps.setString(2, a.getBarKodArtikla());
 			ps.setString(3, a.getNazivArtikla());
 			ps.setDouble(4, a.getCena());
+			if (daLiVecPostoji == true)
+				ps.setInt(5, a.getSifraArtikla());
 			ps.executeUpdate();
 			ps.close();
 			ubacen = true;

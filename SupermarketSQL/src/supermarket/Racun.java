@@ -3,6 +3,8 @@ package supermarket;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map;
+
 import javafx.scene.control.ComboBox;
 
 @SuppressWarnings("serial")
@@ -24,6 +26,23 @@ public class Racun implements Serializable
 		this.ukupanIznosRacuna = ukupanIznosRacuna;
 		this.datumKreiranjaRacuna = datumKreiranjaRacuna;
 		popuniComboStavke();
+	}
+	//za sada se ne koristi nigde
+	public boolean dodajStavkuNaRacun(StavkaZaRacun szr, Magacin magacin)
+	{
+		boolean ubacen = false;
+		
+		for (Map.Entry<Artikal, Integer> e : magacin.getListaArtikla().entrySet())
+		{
+			if (szr.getArtikal().equals(e.getKey()))
+				if (szr.getKolicina() >= e.getValue())
+				{
+					listaStavki.add(szr);
+					ubacen = true;
+				}
+		}
+		
+		return ubacen;
 	}
 	
 	private void popuniComboStavke()

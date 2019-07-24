@@ -1,8 +1,8 @@
 package forme;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
 import javax.swing.JFrame;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -32,9 +32,9 @@ public class KlijentskaForma extends JFrame
 	
 	private ComboBox<Magacin> comboListaMagacina = new ComboBox<>();
 	private ComboBox<Artikal> comboListaArtikla = new ComboBox<>();
-	
 	private List<Artikal> listaArtikla = new ArrayList<>();
 	private List<Magacin> listaMagacina = new ArrayList<>();
+	
 	private List<StavkaZaRacun> listaStavki = new ArrayList<>();
 	
 	private Button dodaj = new Button("Dodaj");
@@ -156,17 +156,12 @@ public class KlijentskaForma extends JFrame
 	@SuppressWarnings("unchecked")
 	private List<Artikal> popuniListuArtikla() 
 	{
-		KlijentskiZahtev kz = new KlijentskiZahtev();
-		kz.setOperacija(Operacije.POPUNI_LISTU_ARTIKLA);
-		int idMagacina = comboListaMagacina.getSelectionModel().getSelectedItem().getIdMagacina();
-		kz.setObjekat(idMagacina);
+		KlijentskiZahtev kz = new KlijentskiZahtev(Operacije.POPUNI_LISTU_ARTIKLA, comboListaMagacina.getSelectionModel().getSelectedItem().getIdMagacina());
 		KomunikacijaSaServerom.getInstanca().posaljiZahtev(kz);
 		ServerskiOdgovor so = KomunikacijaSaServerom.getInstanca().primiOdgovor();
 		
 		comboListaArtikla.getItems().clear();
-		listaArtikla = new ArrayList<>();
-		List<Artikal> lista2 = (List<Artikal>) so.getObjekat();
-		listaArtikla.addAll(lista2);
+		listaArtikla.addAll((Collection<? extends Artikal>) so.getObjekat());
 		for (Artikal artikal : listaArtikla) 
 		{
 			comboListaArtikla.getItems().add(artikal);

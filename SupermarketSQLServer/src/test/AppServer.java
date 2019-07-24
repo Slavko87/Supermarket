@@ -10,6 +10,7 @@ import javafx.stage.WindowEvent;
 
 public class AppServer extends Application
 {
+	
 	ServerskaForma sf = new ServerskaForma();
 
 	public static void main(String[] args) 

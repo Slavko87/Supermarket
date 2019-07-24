@@ -25,12 +25,13 @@ public class DodajNovArtikal extends JFrame
 	private TextField barKodArtiklaTF = new TextField();
 	private TextField nazivArtiklaTF = new TextField();
 	private TextField cenaTF = new TextField();
-	
+	private boolean daLiVecPostoji;
 	private Button dodaj = new Button("Dodaj");
 	
-	public DodajNovArtikal ()
+	public DodajNovArtikal (boolean daLiVecPostoji)
 	{
 		super("Dodaj nov artikal");
+		this.daLiVecPostoji = daLiVecPostoji;
 		stage.setTitle("Dodaj nov artikal");
 		VBox glavniBox = new VBox(10);
 		glavniBox.setPadding(new Insets(10, 10, 10, 10));
@@ -116,11 +117,11 @@ public class DodajNovArtikal extends JFrame
 			else
 				a = new Artikal(Integer.valueOf(sifraTF.getText()), barKodArtiklaTF.getText(), nazivArtiklaTF.getText(), Double.valueOf(cenaTF.getText()));
 				
-			boolean ubacen = Kontroler.getInstanca().ubaciNovArtikal(a);
+			boolean ubacen = Kontroler.getInstanca().ubaciNovArtikal(a, daLiVecPostoji);
 			if (ubacen == true)
 			{
 				Alert alert = new Alert(Alert.AlertType.WARNING);
-				alert.setHeaderText("Nov artikal je dodat");
+				alert.setHeaderText("Nov artikal je dodat/artikal je izmenjen");
 				alert.showAndWait();
 			}
 			else
@@ -133,4 +134,15 @@ public class DodajNovArtikal extends JFrame
 	}
 
 	public Scene getScene() {return scene;}
+	public TextField getSifraTF() {return sifraTF;}
+	public void setSifraTF(TextField sifraTF) {this.sifraTF = sifraTF;}
+	public TextField getBarKodArtiklaTF() {return barKodArtiklaTF;}
+	public void setBarKodArtiklaTF(TextField barKodArtiklaTF) {this.barKodArtiklaTF = barKodArtiklaTF;}
+	public TextField getNazivArtiklaTF() {return nazivArtiklaTF;}
+	public void setNazivArtiklaTF(TextField nazivArtiklaTF) {this.nazivArtiklaTF = nazivArtiklaTF;}
+	public TextField getCenaTF() {return cenaTF;}
+	public void setCenaTF(TextField cenaTF) {this.cenaTF = cenaTF;}
+	public Button getDodaj() {return dodaj;}
+	public void setDodaj(Button dodaj) {this.dodaj = dodaj;}
+	
 }

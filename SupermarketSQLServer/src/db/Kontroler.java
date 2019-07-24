@@ -25,7 +25,7 @@ public class Kontroler
 	public ArrayList<Artikal> dajListuArtikla(Integer broj) 
 	{
 		db.otvoriKonekciju();
-		ArrayList<Artikal> lista = db.dajListuArtikla(broj);
+		ArrayList<Artikal> lista = db.dajListuArtiklaZaMagacin(broj);
 		db.zatvoriKonekciju();
 		return lista;
 	}
@@ -55,11 +55,11 @@ public class Kontroler
 		return lista;
 	}
 
-	public boolean ubaciNovArtikal(Artikal a) 
+	public boolean ubaciNovArtikal(Artikal a, boolean daLiVecPostoji) 
 	{
 		boolean ubacen;
 		db.otvoriKonekciju();
-		ubacen = db.ubaciNovArtikal(a);
+		ubacen = db.ubaciNovArtikal(a, daLiVecPostoji);
 		db.zatvoriKonekciju();
 		return ubacen;
 	}
